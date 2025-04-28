@@ -7,13 +7,39 @@ import SavedCostsCard from "@/components/dashboard/SavedCostsCard";
 import CloudAccountsTable from "@/components/dashboard/CloudAccountsTable";
 import ProviderSummary from "@/components/dashboard/ProviderSummary";
 import { Cloud, CloudCog, ShieldCheck, Users } from "lucide-react";
+import { motion } from "framer-motion";
+import { Toaster } from "@/components/ui/toaster";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
 
 const Index: React.FC = () => {
   return (
     <Layout>
-      <div className="space-y-8">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="space-y-8"
+      >
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <motion.div 
+          variants={itemVariants} 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
+        >
           <StatCard 
             title="Total Cloud Accounts" 
             value="20" 
@@ -46,28 +72,44 @@ const Index: React.FC = () => {
             iconColor="text-cloud-indigo"
             bgColor="bg-cloud-indigo/10"
           />
-        </div>
+        </motion.div>
         
         {/* Cost Trends and Savings */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
-          <div className="lg:col-span-3">
+        <motion.div 
+          variants={itemVariants}
+          className="grid grid-cols-1 lg:grid-cols-4 gap-5"
+        >
+          <motion.div 
+            className="lg:col-span-3"
+            whileHover={{ scale: 1.01 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <CostChart />
-          </div>
-          <div className="lg:col-span-1">
+          </motion.div>
+          <motion.div 
+            className="lg:col-span-1"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             <SavedCostsCard />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Cloud Accounts Table */}
-        <div>
+        <motion.div variants={itemVariants}>
           <CloudAccountsTable />
-        </div>
+        </motion.div>
 
         {/* Provider Summary */}
-        <div>
+        <motion.div 
+          variants={itemVariants}
+          whileHover={{ boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)" }}
+        >
           <ProviderSummary />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
+      
+      <Toaster />
     </Layout>
   );
 };

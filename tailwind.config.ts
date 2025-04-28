@@ -99,6 +99,39 @@ export default {
 					from: { transform: 'translateY(10px)', opacity: '0' },
 					to: { transform: 'translateY(0)', opacity: '1' },
 				},
+				"blob": {
+					"0%": {
+						transform: "translate(0px, 0px) scale(1)",
+					},
+					"33%": {
+						transform: "translate(30px, -50px) scale(1.1)",
+					},
+					"66%": {
+						transform: "translate(-20px, 20px) scale(0.9)",
+					},
+					"100%": {
+						transform: "translate(0px, 0px) scale(1)",
+					},
+				},
+				"pulse-slow": {
+					"0%, 100%": {
+						opacity: "0.4",
+					},
+					"50%": {
+						opacity: "0.8",
+					},
+				},
+				"float": {
+					"0%": {
+						transform: "translateY(0px)",
+					},
+					"50%": {
+						transform: "translateY(-10px)",
+					},
+					"100%": {
+						transform: "translateY(0px)",
+					},
+				},
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
@@ -106,10 +139,21 @@ export default {
 				"fade-in": "fade-in 0.3s ease-out",
 				"fade-out": "fade-out 0.3s ease-out",
 				"slide-in": "slide-in 0.3s ease-out",
+				"blob": "blob 7s infinite",
+				"pulse-slow": "pulse-slow 4s infinite",
+				"float": "float 5s ease-in-out infinite",
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'hero-pattern': "url('/abstract-bg.svg')",
+				'glass-gradient': 'linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3))',
+			},
+			boxShadow: {
+				'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+			},
+			transitionProperty: {
+				'height': 'height',
+				'spacing': 'margin, padding',
 			},
 		}
 	},

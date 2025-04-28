@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,73 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  
+  .glass-effect {
+    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-cloud-blue to-cloud-teal bg-clip-text text-transparent;
+  }
+}
+
+/* Enhanced Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Table Enhancements */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Input Focus Effects */
+input:focus, textarea:focus, select:focus {
+  @apply ring-2 ring-cloud-blue/30 outline-none;
+  transition: all 0.2s ease;
+}
+
+/* Enhanced Button Hover */
+button:not([disabled]):hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+button:not([disabled]):active {
+  transform: translateY(0);
+}
+
+/* Card hover effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -10px rgba(0, 0, 0, 0.1);
 }
