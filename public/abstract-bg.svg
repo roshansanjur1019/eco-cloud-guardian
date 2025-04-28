@@ -1,0 +1,15 @@
+
+<svg width="900" height="600" viewBox="0 0 900 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M0 0h900v600H0z" fill="#fff"/>
+  <path d="M0 0h900v600H0z" fill="url(#paint0_linear)"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M450 300c132.548 0 240-107.452 240-240H210c0 132.548 107.452 240 240 240z" fill="#0ea5e9" fill-opacity=".15"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M450 300c-82.843 0-150 67.157-150 150s67.157 150 150 150 150-67.157 150-150-67.157-150-150-150zm0 50c55.228 0 100 44.772 100 100s-44.772 100-100 100-100-44.772-100-100 44.772-100 100-100z" fill="#14b8a6" fill-opacity=".2"/>
+  <path d="M675 150c0 41.421-33.579 75-75 75s-75-33.579-75-75 33.579-75 75-75 75 33.579 75 75z" fill="#8b5cf6" fill-opacity=".15"/>
+  <path d="M375 450c33.137 0 60-26.863 60-60s-26.863-60-60-60-60 26.863-60 60 26.863 60 60 60z" fill="#0ea5e9" fill-opacity=".15"/>
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="900" y2="600" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff" stop-opacity=".5"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>
