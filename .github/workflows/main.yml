@@ -70,12 +70,15 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
+      - name: Get S3 Bucket Name
+        id: get-bucket
+        working-directory: terraform/environments/test
+        run: |
+          echo "bucket_name=$(terraform output -raw s3_bucket_name)" >> $GITHUB_OUTPUT
+
       - name: Deploy to S3
         run: |
-          cd terraform/environments/test
-          BUCKET_NAME=$(terraform output -raw s3_bucket_name)
-          cd ../../..
-          aws s3 sync dist/ s3://$BUCKET_NAME --delete
+          aws s3 sync dist/ s3://${{ steps.get-bucket.outputs.bucket_name }} --delete
 
       - name: Invalidate CloudFront Cache
         working-directory: terraform/environments/test

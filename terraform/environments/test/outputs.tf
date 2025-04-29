@@ -16,5 +16,5 @@ output "cloudfront_distribution_id" {
 
 output "s3_bucket_name" {
   description = "The name of the S3 bucket hosting the website"
-  value       = module.website.website_url
+  value       = module.website.s3_bucket_name
 }
