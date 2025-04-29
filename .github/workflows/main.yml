@@ -54,19 +54,18 @@ jobs:
           terraform init
           terraform apply -auto-approve -var="jwt_secret=${{ secrets.JWT_SECRET }}"
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: '18'
-          cache: 'npm'
+          bun-version: latest
 
       - name: Install Dependencies
         run: |
-          npm install
-          npx update-browserslist-db@latest
+          bun install
+          bun update caniuse-lite
 
       - name: Build Application
-        run: npm run build
+        run: bun run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
