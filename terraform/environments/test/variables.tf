@@ -29,12 +29,6 @@ variable "availability_zones" {
   default     = ["us-west-2a", "us-west-2b"]
 }
 
-variable "db_password" {
-  description = "Password for the MongoDB database"
-  type        = string
-  sensitive   = true
-}
-
 variable "jwt_secret" {
   description = "Secret key for JWT authentication"
   type        = string
