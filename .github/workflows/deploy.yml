@@ -1,101 +1,76 @@
-name: Deploy to AWS
+name: 'Deploy Application'
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.ts'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.ts'
+  workflow_dispatch:  # Allow manual triggering
 
 env:
-  TF_WORKSPACE: test
-  AWS_REGION: ${{ secrets.AWS_REGION }}
-  VITE_APP_API_URL: ${{ secrets.API_URL }}
-
-permissions:
-  id-token: write
-  contents: read
+  AWS_REGION: us-west-2
+  NODE_VERSION: '18'
 
 jobs:
   deploy:
-    name: Build and Deploy
+    name: 'Build and Deploy'
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Configure AWS credentials
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.7.0"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-        env:
-          VITE_APP_API_URL: ${{ env.VITE_APP_API_URL }}
-
-      - name: Terraform Init
+      - name: Get S3 Bucket Name
+        id: get_bucket
         run: |
-          cd terraform/environments/test
-          terraform init
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME=$(aws s3 ls | grep eco-cloud-guardian-test-web | awk '{print $3}')
+          echo "bucket_name=$BUCKET_NAME" >> $GITHUB_OUTPUT
 
-      - name: Terraform Plan
+      - name: Deploy to S3
         run: |
-          cd terraform/environments/test
-          terraform plan \
-            -var="project_name=eco-cloud-guardian" \
-            -var="environment=test" \
-            -var="aws_region=${{ env.AWS_REGION }}" \
-            -out=tfplan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws s3 sync dist/ s3://${{ steps.get_bucket.outputs.bucket_name }} --delete
 
-      - name: Terraform Apply
+      - name: Get CloudFront Distribution ID
+        id: get_distribution
         run: |
-          cd terraform/environments/test
-          terraform apply -auto-approve tfplan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DIST_ID=$(aws cloudfront list-distributions --query "DistributionList.Items[?contains(Origins.Items[].DomainName, '${{ steps.get_bucket.outputs.bucket_name }}')].Id" --output text)
+          echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
 
-      - name: Upload to S3
+      - name: Invalidate CloudFront Cache
         run: |
-          BUCKET_NAME=$(cd terraform/environments/test && terraform output -raw website_url | cut -d'/' -f1)
-          aws s3 sync dist/ s3://$BUCKET_NAME \
-            --delete \
-            --cache-control "max-age=31536000,public" \
-            --exclude "*.html" \
-            --exclude "*.json"
-
-          # Upload HTML and JSON files with different cache settings
-          aws s3 sync dist/ s3://$BUCKET_NAME \
-            --delete \
-            --cache-control "no-cache" \
-            --include "*.html" \
-            --include "*.json"
-
-      - name: Invalidate CloudFront cache
-        run: |
-          DISTRIBUTION_ID=$(cd terraform/environments/test && terraform output -raw cloudfront_distribution_id)
           aws cloudfront create-invalidation \
-            --distribution-id $DISTRIBUTION_ID \
+            --distribution-id ${{ steps.get_distribution.outputs.distribution_id }} \
             --paths "/*" 

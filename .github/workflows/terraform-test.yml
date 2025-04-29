@@ -5,12 +5,25 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/environments/test/**'
-      - 'terraform/modules/**'
+      - 'src/**'
+      - 'public/**'
+      - 'terraform/**'
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.ts'
   pull_request:
     paths:
-      - 'terraform/environments/test/**'
-      - 'terraform/modules/**'
+      - 'src/**'
+      - 'public/**'
+      - 'terraform/**'
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'index.html'
+      - 'vite.config.ts'
+  workflow_dispatch:  # Allow manual triggering
 
 permissions:
   contents: read
