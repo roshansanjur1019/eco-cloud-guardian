@@ -71,10 +71,11 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Deploy to S3
-        working-directory: terraform/environments/test
         run: |
+          cd terraform/environments/test
           BUCKET_NAME=$(terraform output -raw s3_bucket_name)
-          aws s3 sync ../../dist/ s3://$BUCKET_NAME --delete
+          cd ../../..
+          aws s3 sync dist/ s3://$BUCKET_NAME --delete
 
       - name: Invalidate CloudFront Cache
         working-directory: terraform/environments/test
