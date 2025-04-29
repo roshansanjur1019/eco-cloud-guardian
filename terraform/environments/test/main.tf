@@ -22,11 +22,14 @@ provider "aws" {
 
 # Static hosting configuration
 module "website" {
-  source = "../../"
+  source = "../../modules/static-hosting"
   
   environment  = var.environment
   project_name = var.project_name
-  aws_region   = var.aws_region
+  domain_name  = "${var.environment}.${var.project_name}.com"  # Temporary domain for testing
+  
+  # Using a self-signed certificate for testing
+  acm_certificate_arn = "arn:aws:acm:us-east-1:000000000000:certificate/00000000-0000-0000-0000-000000000000"
   
   # CloudFront Configuration - shorter TTL for testing
   cdn_ttl = {
