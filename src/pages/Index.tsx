@@ -26,13 +26,16 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
 };
 
-const floatingAnimation = {
-  y: [0, -10, 0],
-  transition: {
-    duration: 5,
-    repeat: Infinity,
-    repeatType: "mirror",
-    ease: "easeInOut",
+// Define the animation separately to match proper typing
+const floatingVariants = {
+  animate: {
+    y: [0, -10, 0],
+    transition: {
+      duration: 5,
+      repeat: Infinity,
+      repeatType: "mirror",
+      ease: "easeInOut",
+    },
   },
 };
 
@@ -107,7 +110,8 @@ const Index: React.FC = () => {
             >
               <motion.div
                 className="relative"
-                animate={floatingAnimation}
+                variants={floatingVariants}
+                animate="animate"
               >
                 <CostChart />
               </motion.div>
