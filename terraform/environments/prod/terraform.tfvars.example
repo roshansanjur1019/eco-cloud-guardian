@@ -1,0 +1,4 @@
+# Example production environment variables
+project_name = "eco-cloud-guardian"
+aws_region   = "us-west-2"
+domain_name  = "example.com" 
