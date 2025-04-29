@@ -52,7 +52,7 @@ jobs:
         working-directory: terraform/environments/test
         run: |
           terraform init
-          terraform apply -auto-approve
+          terraform apply -auto-approve -var="jwt_secret=${{ secrets.JWT_SECRET }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
