@@ -35,6 +35,13 @@ jobs:
         with:
           terraform_version: "1.7.0"
 
+      - name: Remove Terraform State Lock
+        run: |
+          aws dynamodb delete-item \
+            --table-name "eco-cloud-guardian-tflocks-q0wmbvik" \
+            --key '{"LockID": {"S": "eco-cloud-guardian-tfstate-q0wmbvik/test/terraform.tfstate"}}' \
+            --region "us-west-2" || true
+
       - name: Update Backend Configuration
         working-directory: terraform/environments/test
         run: |
