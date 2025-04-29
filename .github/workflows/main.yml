@@ -16,7 +16,7 @@ on:
 
 jobs:
   deploy:
-    name: 'Build and Deploy'
+    name: 'Deploy Website'
     runs-on: ubuntu-latest
 
     steps:
@@ -30,19 +30,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-west-2"
 
-      # First, create/update infrastructure
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.7.0"
 
-      - name: Terraform Init and Apply
+      - name: Update Backend Configuration
+        working-directory: terraform/environments/test
+        run: |
+          sed -i "s/BUCKET_NAME_PLACEHOLDER/eco-cloud-guardian-tfstate-q0wmbvik/" main.tf
+          sed -i "s/TABLE_NAME_PLACEHOLDER/eco-cloud-guardian-tflocks-q0wmbvik/" main.tf
+
+      - name: Deploy Infrastructure
         working-directory: terraform/environments/test
         run: |
           terraform init
-          terraform apply -auto-approve -var="project_name=eco-cloud-guardian" -var="environment=test"
+          terraform apply -auto-approve
 
-      # Then, build and deploy the application
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
