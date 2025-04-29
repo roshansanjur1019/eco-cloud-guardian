@@ -70,8 +70,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "website" {
   bucket = aws_s3_bucket.website.id
 
   rule {
-    id     = "cleanup_old_versions"
+    id     = "cleanup-old-versions"
     status = "Enabled"
+
+    filter {
+      prefix = ""  # Apply to all objects
+    }
 
     noncurrent_version_expiration {
       noncurrent_days = 30

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -37,14 +36,14 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
         {!collapsed && (
           <div className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-full bg-gradient-to-r from-cloud-teal to-cloud-blue flex items-center justify-center">
-              <span className="text-white font-bold">EG</span>
+              <span className="text-white font-bold">SS</span>
             </div>
-            <span className="text-lg font-semibold text-cloud-dark">EcoGuard</span>
+            <span className="text-lg font-semibold text-cloud-dark">skyspearsolutions.io</span>
           </div>
         )}
         {collapsed && (
           <div className="h-8 w-8 mx-auto rounded-full bg-gradient-to-r from-cloud-teal to-cloud-blue flex items-center justify-center">
-            <span className="text-white font-bold">EG</span>
+            <span className="text-white font-bold">SS</span>
           </div>
         )}
         <button
