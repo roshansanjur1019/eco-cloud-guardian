@@ -52,3 +52,18 @@ variable "frontend_container_tag" {
   type        = string
   default     = "latest"
 }
+
+# CloudFront TTL settings
+variable "cdn_ttl" {
+  description = "CloudFront cache TTL settings"
+  type = object({
+    min     = number
+    default = number
+    max     = number
+  })
+  default = {
+    min     = 0
+    default = 60     # 1 minute
+    max     = 3600   # 1 hour
+  }
+}
