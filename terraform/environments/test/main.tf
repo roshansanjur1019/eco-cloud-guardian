@@ -6,13 +6,7 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "eco-cloud-guardian-terraform-state"
-    key            = "test/terraform.tfstate"
-    region         = "us-west-2"
-    encrypt        = true
-    dynamodb_table = "eco-cloud-guardian-terraform-locks"
-  }
+  backend "local" {}  # Using local backend for simplicity since we're using Supabase for database
 }
 
 provider "aws" {

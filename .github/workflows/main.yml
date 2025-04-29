@@ -36,13 +36,11 @@ jobs:
         with:
           terraform_version: "1.7.0"
 
-      - name: Terraform Init
+      - name: Terraform Init and Apply
         working-directory: terraform/environments/test
-        run: terraform init
-
-      - name: Terraform Apply
-        working-directory: terraform/environments/test
-        run: terraform apply -auto-approve
+        run: |
+          terraform init
+          terraform apply -auto-approve -var="project_name=eco-cloud-guardian" -var="environment=test"
 
       # Then, build and deploy the application
       - name: Setup Node.js
@@ -56,21 +54,18 @@ jobs:
 
       - name: Build Application
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Deploy to S3
         working-directory: terraform/environments/test
         run: |
-          # Get the S3 bucket name from Terraform output
           BUCKET_NAME=$(terraform output -raw s3_bucket_name)
-          # Deploy the built files to S3
           aws s3 sync ../../dist/ s3://$BUCKET_NAME --delete
 
       - name: Invalidate CloudFront Cache
         working-directory: terraform/environments/test
         run: |
-          # Get the CloudFront distribution ID from Terraform output
           DIST_ID=$(terraform output -raw cloudfront_distribution_id)
-          # Invalidate the CloudFront cache
-          aws cloudfront create-invalidation \
-            --distribution-id $DIST_ID \
-            --paths "/*" 
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*" 
