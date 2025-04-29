@@ -6,12 +6,13 @@ terraform {
     }
   }
 
+  # Note: The backend values need to be updated after running terraform output in the bootstrap directory
   backend "s3" {
-    bucket         = "eco-cloud-guardian-terraform-state"
+    bucket         = "BUCKET_NAME_PLACEHOLDER"  # This will be replaced with actual value after bootstrap
     key            = "test/terraform.tfstate"
     region         = "us-west-2"
     encrypt        = true
-    dynamodb_table = "eco-cloud-guardian-terraform-locks"
+    dynamodb_table = "TABLE_NAME_PLACEHOLDER"   # This will be replaced with actual value after bootstrap
   }
 }
 
