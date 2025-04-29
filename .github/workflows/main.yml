@@ -1,0 +1,76 @@
+name: 'Deploy Website'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'terraform/**'
+      - '.github/workflows/**'
+      - 'package.json'
+      - 'index.html'
+      - 'vite.config.ts'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  deploy:
+    name: 'Build and Deploy'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "us-west-2"
+
+      # First, create/update infrastructure
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform Init
+        working-directory: terraform/environments/test
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: terraform/environments/test
+        run: terraform apply -auto-approve
+
+      # Then, build and deploy the application
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Deploy to S3
+        working-directory: terraform/environments/test
+        run: |
+          # Get the S3 bucket name from Terraform output
+          BUCKET_NAME=$(terraform output -raw s3_bucket_name)
+          # Deploy the built files to S3
+          aws s3 sync ../../dist/ s3://$BUCKET_NAME --delete
+
+      - name: Invalidate CloudFront Cache
+        working-directory: terraform/environments/test
+        run: |
+          # Get the CloudFront distribution ID from Terraform output
+          DIST_ID=$(terraform output -raw cloudfront_distribution_id)
+          # Invalidate the CloudFront cache
+          aws cloudfront create-invalidation \
+            --distribution-id $DIST_ID \
+            --paths "/*" 
