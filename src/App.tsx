@@ -42,6 +42,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     console.log("No user found, redirecting to login");
+    // Save the current URL to redirect back after login
+    sessionStorage.setItem('redirectAfterLogin', window.location.pathname);
     return <Navigate to="/login" replace />;
   }
 
@@ -49,6 +51,20 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppRoutes() {
+  const { user } = useAuth();
+  
+  // Handle tenant redirects if needed
+  useEffect(() => {
+    const tenantId = sessionStorage.getItem('tenantId');
+    const redirectPath = sessionStorage.getItem('redirectAfterLogin');
+    
+    // If user logged in and there's a redirect path, navigate there
+    if (user && redirectPath) {
+      sessionStorage.removeItem('redirectAfterLogin');
+      window.location.href = redirectPath;
+    }
+  }, [user]);
+  
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />

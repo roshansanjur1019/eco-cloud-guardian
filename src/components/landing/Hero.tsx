@@ -27,26 +27,56 @@ export const fadeIn = {
   visible: { opacity: 1, transition: { duration: 0.8 } },
 };
 
+const floatingAnimation = {
+  y: [-10, 10],
+  transition: {
+    y: {
+      duration: 2,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut"
+    }
+  }
+};
+
 const Hero: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
       <motion.div variants={itemVariants}>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-          <span className="bg-gradient-to-r from-cloud-blue to-cloud-teal bg-clip-text text-transparent">
+        <motion.h1 
+          className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <motion.span 
+            className="bg-gradient-to-r from-cloud-blue to-cloud-teal bg-clip-text text-transparent inline-block"
+            whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+          >
             Unified Cloud Governance
-          </span>{" "}
+          </motion.span>{" "}
           <br />for Modern Enterprises
-        </h1>
-        <p className="text-lg text-gray-600 mb-8 max-w-xl">
+        </motion.h1>
+        <motion.p 
+          className="text-lg text-gray-600 mb-8 max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
           Optimize costs, ensure security compliance, and streamline operations across AWS, Azure, and GCP with our comprehensive platform.
-        </p>
-        <div className="flex flex-wrap gap-4">
+        </motion.p>
+        <motion.div 
+          className="flex flex-wrap gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
           <Button 
             onClick={() => navigate('/login')} 
             size="lg"
-            className="bg-gradient-to-r from-cloud-blue to-cloud-teal text-white hover:opacity-90 transition-all px-8"
+            className="bg-gradient-to-r from-cloud-blue to-cloud-teal text-white hover:opacity-90 transition-all px-8 hover:shadow-lg transform hover:-translate-y-1"
           >
             Start Free Trial <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
@@ -57,11 +87,11 @@ const Hero: React.FC = () => {
               const demoSection = document.getElementById('features');
               demoSection?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="border-cloud-blue text-cloud-blue hover:bg-cloud-blue/10"
+            className="border-cloud-blue text-cloud-blue hover:bg-cloud-blue/10 transform hover:-translate-y-1 transition-transform"
           >
             See Features
           </Button>
-        </div>
+        </motion.div>
       </motion.div>
       
       <motion.div 
@@ -94,22 +124,68 @@ const Hero: React.FC = () => {
           }}
         />
         <motion.div
-          animate={{
-            y: [0, -10, 0],
-          }}
-          transition={{
-            duration: 5,
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
+          animate={floatingAnimation}
           className="relative z-10"
         >
           <img 
-            src="/placeholder.svg" 
+            src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80" 
             alt="Dashboard Preview" 
             className="rounded-xl shadow-2xl border border-white/10 bg-white/50 backdrop-blur-sm"
           />
           <div className="absolute inset-0 bg-gradient-to-tr from-cloud-blue/10 to-transparent rounded-xl" />
+          
+          {/* Floating elements */}
+          <motion.div
+            className="absolute -top-5 -right-5 bg-white p-3 rounded-lg shadow-lg flex items-center gap-2"
+            animate={{
+              y: [-5, 5],
+              rotate: [-2, 2],
+              transition: {
+                y: {
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut"
+                },
+                rotate: {
+                  duration: 6,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut"
+                }
+              }
+            }}
+          >
+            <div className="h-3 w-3 bg-green-500 rounded-full"></div>
+            <span className="text-xs font-semibold text-gray-700">All systems operational</span>
+          </motion.div>
+          
+          <motion.div
+            className="absolute -bottom-4 -left-4 bg-white p-2 rounded-lg shadow-lg text-xs font-medium text-gray-700"
+            animate={{
+              y: [3, -3],
+              x: [2, -2],
+              transition: {
+                y: {
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut"
+                },
+                x: {
+                  duration: 7,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut"
+                }
+              }
+            }}
+          >
+            <span className="flex items-center gap-1">
+              <span className="bg-blue-500 h-2 w-2 rounded-full"></span>
+              Cost optimization active
+            </span>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
