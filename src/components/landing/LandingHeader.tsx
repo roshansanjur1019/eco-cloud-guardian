@@ -1,4 +1,3 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -84,8 +83,9 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ tenantId, isCustomDomain 
         <motion.div whileHover="hover" whileTap="tap" variants={buttonVariants}>
           <Button 
             variant="ghost" 
-            onClick={() => navigate('/login')}
+            onClick={() => { console.log('Login button clicked'); navigate('/login'); }}
             className="text-gray-700 hover:text-cloud-blue"
+            style={{ pointerEvents: 'auto' }}
           >
             Login
           </Button>

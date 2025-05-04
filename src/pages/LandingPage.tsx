@@ -19,6 +19,7 @@ const FloatingElements = () => {
         <motion.div
           key={i}
           className="absolute rounded-full bg-gradient-to-r from-cloud-blue/10 to-cloud-teal/10"
+          style={{ pointerEvents: 'none' }}
           initial={{
             x: Math.random() * window.innerWidth,
             y: Math.random() * window.innerHeight,
@@ -45,11 +46,6 @@ const FloatingElements = () => {
             duration: Math.random() * 20 + 20,
             repeat: Infinity,
             repeatType: "reverse",
-          }}
-          style={{
-            width: `${Math.random() * 200 + 50}px`,
-            height: `${Math.random() * 200 + 50}px`,
-            opacity: Math.random() * 0.2 + 0.1,
           }}
         />
       ))}
@@ -119,7 +115,9 @@ const LandingPage: React.FC = () => {
         animate="visible"
         variants={containerVariants}
       >
-        <LandingHeader tenantId={tenantId} isCustomDomain={isCustomDomain} />
+        <div style={{ zIndex: 50, position: 'relative' }}>
+          <LandingHeader tenantId={tenantId} isCustomDomain={isCustomDomain} />
+        </div>
         
         <motion.div
           initial="hidden"
@@ -191,7 +189,7 @@ const CursorFollower: React.FC = () => {
   
   return (
     <motion.div
-      className="fixed w-40 h-40 rounded-full pointer-events-none z-10 mix-blend-difference"
+      className="fixed w-40 h-40 rounded-full mix-blend-difference"
       animate={{
         x: mousePosition.x - 80,
         y: mousePosition.y - 80,
@@ -206,6 +204,8 @@ const CursorFollower: React.FC = () => {
       }}
       style={{
         background: 'radial-gradient(circle, rgba(78,192,240,1) 0%, rgba(20,184,166,0.5) 100%)',
+        pointerEvents: 'none',
+        zIndex: 1,
       }}
     />
   );

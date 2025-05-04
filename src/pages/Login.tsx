@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { useTenant } from "@/contexts/TenantContext";
 
 interface LoginProps {
   isSignUp?: boolean;
@@ -23,6 +24,10 @@ const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(defaultIsSignUp);
   const [connectionStatus, setConnectionStatus] = useState<string>("Checking...");
+  const [tenantName, setTenantName] = useState("");
+  const [tenantId, setTenantId] = useState("");
+  const [tenants, setTenants] = useState<{ id: string; name: string }[]>([]);
+  const { setTenant } = useTenant();
 
   useEffect(() => {
     setIsSignUp(defaultIsSignUp);
@@ -51,6 +56,15 @@ const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
     checkConnection();
   }, []);
 
+  useEffect(() => {
+    if (isSignUp) {
+      // Fetch tenants from Supabase
+      supabase.from('tenants').select('id, name').then(({ data }) => {
+        if (data) setTenants(data);
+      });
+    }
+  }, [isSignUp]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -64,8 +78,31 @@ const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
         });
         
         if (error) throw error;
+        const user = data.user;
         
-        console.log("Signup response:", data);
+        // Create or select tenant
+        let tenant = null;
+        if (tenantId) {
+          tenant = tenants.find(t => t.id === tenantId);
+        } else if (tenantName) {
+          const { data: newTenant, error: tenantError } = await supabase.from('tenants').insert([{ name: tenantName }]).select().single();
+          if (tenantError) throw tenantError;
+          tenant = newTenant;
+        }
+        if (tenant) setTenant(tenant);
+        
+        // Insert user profile with tenant_id
+        if (user && tenant) {
+          await supabase.from('profiles').insert([
+            {
+              id: user.id,
+              email: user.email,
+              full_name: user.user_metadata?.full_name || '', // or get from form
+              tenant_id: tenant.id,
+            }
+          ]);
+        }
+        
         toast.success("Account created! Please check your email for verification.");
         setIsSignUp(false);
       } else {
@@ -77,9 +114,25 @@ const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
         
         if (error) throw error;
         
+        // Fetch profile to get tenant_id
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('tenant_id, full_name, email')
+          .eq('id', data.user.id)
+          .maybeSingle();
+        if (profile && profile.tenant_id) {
+          // Optionally fetch tenant name
+          const { data: tenantData } = await supabase
+            .from('tenants')
+            .select('id, name')
+            .eq('id', profile.tenant_id)
+            .maybeSingle();
+          if (tenantData) setTenant(tenantData);
+        }
+        
         console.log("Login response:", data);
         toast.success("Login successful!");
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.error("Auth error:", error);
@@ -151,6 +204,31 @@ const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
                   </button>
                 </div>
               </div>
+              {isSignUp && (
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium">Organization</Label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={tenantId}
+                    onChange={e => setTenantId(e.target.value)}
+                    disabled={isLoading}
+                  >
+                    <option value="">-- Select Existing --</option>
+                    {tenants.map(t => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500">or</span>
+                    <Input
+                      placeholder="Create new organization"
+                      value={tenantName}
+                      onChange={e => setTenantName(e.target.value)}
+                      disabled={isLoading}
+                    />
+                  </div>
+                </div>
+              )}
               {!isSignUp && (
                 <div className="flex items-center justify-end">
                   <Button

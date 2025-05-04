@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import { useEffect } from "react";
 import { checkSupabaseConnection } from "./lib/supabase-check";
 import AdminDashboard from "./pages/admin";
 import LandingPage from "./pages/LandingPage";
+import { TenantProvider } from "@/contexts/TenantContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -118,13 +118,15 @@ const App = () => {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider delayDuration={200}>
-            <Toaster />
-            <Sonner position="top-right" />
-            <AppRoutes />
-          </TooltipProvider>
-        </AuthProvider>
+        <TenantProvider>
+          <AuthProvider>
+            <TooltipProvider delayDuration={200}>
+              <Toaster />
+              <Sonner position="top-right" />
+              <AppRoutes />
+            </TooltipProvider>
+          </AuthProvider>
+        </TenantProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );

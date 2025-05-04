@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { useTenant } from "@/contexts/TenantContext";
 
 function TrafficTable() {
   const [traffic, setTraffic] = useState<any[]>([]);
+  const { tenant } = useTenant();
   useEffect(() => {
+    if (!tenant) return;
     supabase
       .from("traffic")
       .select("id, user_id, page, timestamp")
+      .eq("tenant_id", tenant.id)
       .order("timestamp", { ascending: false })
       .then(({ data }) => setTraffic(data || []));
-  }, []);
+  }, [tenant]);
   return (
     <div className="mb-8">
       <h2 className="text-lg font-bold mb-2">Traffic</h2>
@@ -38,13 +42,16 @@ function TrafficTable() {
 
 function RevenueTable() {
   const [revenue, setRevenue] = useState<any[]>([]);
+  const { tenant } = useTenant();
   useEffect(() => {
+    if (!tenant) return;
     supabase
       .from("revenue")
       .select("id, amount, date, description")
+      .eq("tenant_id", tenant.id)
       .order("date", { ascending: false })
       .then(({ data }) => setRevenue(data || []));
-  }, []);
+  }, [tenant]);
   return (
     <div className="mb-8">
       <h2 className="text-lg font-bold mb-2">Revenue</h2>

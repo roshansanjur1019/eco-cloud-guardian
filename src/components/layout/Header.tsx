@@ -1,13 +1,31 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Bell, Search, Plus, ChevronDown, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTenant } from "@/contexts/TenantContext";
+import { supabase } from "@/lib/supabase";
+
+const getInitials = (name: string | null | undefined, email: string | null | undefined) => {
+  if (name) {
+    const parts = name.split(" ");
+    if (parts.length === 1) return parts[0][0]?.toUpperCase() || "U";
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  if (email) return email[0]?.toUpperCase() || "U";
+  return "U";
+};
 
 const Header: React.FC = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [notifDropdown, setNotifDropdown] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const { setTenant, tenant } = useTenant();
+  const navigate = useNavigate();
+
+  const initials = getInitials(profile?.full_name, user?.email);
+  const emailToShow = profile?.email || user?.email || "-";
 
   const toggleDropdown = () => setShowDropdown(!showDropdown);
   const toggleNotifDropdown = () => setNotifDropdown(!notifDropdown);
@@ -28,6 +46,9 @@ const Header: React.FC = () => {
         >
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">Dashboard</h1>
           <p className="text-sm text-gray-500">Welcome back to your cloud governance center</p>
+          {tenant && (
+            <div className="text-xs text-cloud-blue font-semibold mt-1">Organization: {tenant.name}</div>
+          )}
         </motion.div>
         
         <motion.div 
@@ -130,7 +151,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-2 cursor-pointer"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cloud-blue to-cloud-teal text-white flex items-center justify-center font-medium">
-                JS
+                {initials}
               </div>
               <ChevronDown size={16} className="text-gray-500" />
             </motion.div>
@@ -145,21 +166,21 @@ const Header: React.FC = () => {
                   className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-100 z-50"
                 >
                   <div className="p-3 border-b border-gray-100">
-                    <p className="font-medium">John Smith</p>
-                    <p className="text-xs text-gray-500">john@company.com</p>
+                    <p className="font-medium">{profile?.full_name || user?.email || "-"}</p>
+                    <p className="text-xs text-gray-500">{emailToShow}</p>
                   </div>
                   <div className="p-1">
-                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 rounded">
+                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 rounded" onClick={() => navigate('/profile')}>
                       <User size={16} className="text-gray-500" />
                       <span>Profile</span>
                     </button>
-                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 rounded">
+                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 rounded" onClick={() => navigate('/settings')}>
                       <Settings size={16} className="text-gray-500" />
                       <span>Settings</span>
                     </button>
                   </div>
                   <div className="p-1 border-t border-gray-100">
-                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 text-red-500 rounded">
+                    <button className="flex items-center gap-2 w-full text-left p-2 hover:bg-gray-50 text-red-500 rounded" onClick={() => { signOut(); setTenant(null); sessionStorage.clear(); }}>
                       <LogOut size={16} />
                       <span>Sign out</span>
                     </button>
