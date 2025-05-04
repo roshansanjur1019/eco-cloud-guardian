@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { useEffect } from "react";
 import { checkSupabaseConnection } from "./lib/supabase-check";
+import AdminDashboard from "./pages/admin";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <AddAccount />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         }
       />
