@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +13,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { useEffect } from "react";
 import { checkSupabaseConnection } from "./lib/supabase-check";
 import AdminDashboard from "./pages/admin";
+import LandingPage from "./pages/LandingPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,9 +51,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <Index />
