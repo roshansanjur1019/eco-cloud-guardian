@@ -15,6 +15,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     // Simulate page loading
     setPageLoaded(true);
+    
+    // Handle anchor links for smooth scrolling
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const id = hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+    
+    // Check hash on load
+    handleHashChange();
+    
+    // Add listener for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
   return (
