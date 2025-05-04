@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AnimatedBackground, FloatingElements } from "@/components/ui/animated-background";
+import { AnimatedBackground } from "@/components/ui/animated-background";
 import { containerVariants } from "@/components/landing/Hero";
 import LandingHeader from "@/components/landing/LandingHeader";
 import Hero from "@/components/landing/Hero";
@@ -11,6 +10,52 @@ import DashboardPreview from "@/components/landing/DashboardPreview";
 import CallToAction from "@/components/landing/CallToAction";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { useToast } from "@/components/ui/use-toast";
+
+// Custom floating elements component since we're having type issues with the imported one
+const FloatingElements = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {Array.from({ length: 10 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-gradient-to-r from-cloud-blue/10 to-cloud-teal/10"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            scale: Math.random() * 0.5 + 0.5,
+          }}
+          animate={{
+            x: [
+              Math.random() * window.innerWidth,
+              Math.random() * window.innerWidth,
+              Math.random() * window.innerWidth,
+            ],
+            y: [
+              Math.random() * window.innerHeight,
+              Math.random() * window.innerHeight,
+              Math.random() * window.innerHeight,
+            ],
+            scale: [
+              Math.random() * 0.3 + 0.5,
+              Math.random() * 0.5 + 0.7,
+              Math.random() * 0.3 + 0.5,
+            ],
+          }}
+          transition={{
+            duration: Math.random() * 20 + 20,
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
+          style={{
+            width: `${Math.random() * 200 + 50}px`,
+            height: `${Math.random() * 200 + 50}px`,
+            opacity: Math.random() * 0.2 + 0.1,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 const LandingPage: React.FC = () => {
   const [tenantId, setTenantId] = useState<string | null>(null);
@@ -62,7 +107,7 @@ const LandingPage: React.FC = () => {
   
   return (
     <AnimatedBackground className="min-h-screen flex flex-col overflow-hidden">
-      <FloatingElements count={10} />
+      <FloatingElements />
       
       {/* Cursor follower effect */}
       <CursorFollower />
