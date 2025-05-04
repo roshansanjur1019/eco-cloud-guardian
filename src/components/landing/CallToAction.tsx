@@ -52,7 +52,7 @@ const CallToAction: React.FC = () => {
           whileTap={{ scale: 0.98 }}
         >
           <Button 
-            onClick={() => navigate('/login')} 
+            onClick={() => navigate('/register')} 
             size="lg" 
             variant="outline"
             className="bg-white text-cloud-dark-blue hover:bg-white/90 border-0 px-8 shadow-lg transform transition-all duration-300"

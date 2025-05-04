@@ -10,15 +10,23 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 
-const Login = () => {
+interface LoginProps {
+  isSignUp?: boolean;
+}
+
+const Login = ({ isSignUp: defaultIsSignUp = false }: LoginProps) => {
   const navigate = useNavigate();
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(defaultIsSignUp);
   const [connectionStatus, setConnectionStatus] = useState<string>("Checking...");
+
+  useEffect(() => {
+    setIsSignUp(defaultIsSignUp);
+  }, [defaultIsSignUp]);
 
   useEffect(() => {
     const checkConnection = async () => {
@@ -199,4 +207,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

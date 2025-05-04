@@ -49,7 +49,7 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ tenantId, isCustomDomain 
           <span className="text-white font-bold text-xl">SS</span>
         </div>
         <span className="text-2xl font-bold bg-gradient-to-r from-cloud-blue to-cloud-teal bg-clip-text text-transparent">
-          skyspearsolutions.io
+          skyspearsolutions
         </span>
         
         {tenantId && (
@@ -93,7 +93,7 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ tenantId, isCustomDomain 
         
         <motion.div whileHover="hover" whileTap="tap" variants={buttonVariants}>
           <Button 
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/register')}
             className="bg-gradient-to-r from-cloud-blue to-cloud-teal text-white hover:opacity-90 transition-all shadow-md hover:shadow-lg"
           >
             Get Started

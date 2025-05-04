@@ -69,6 +69,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Login isSignUp={true} />} />
       <Route
         path="/dashboard"
         element={

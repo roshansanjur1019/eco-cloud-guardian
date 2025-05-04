@@ -30,13 +30,12 @@ const DashboardPreview: React.FC = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-cloud-blue/10 via-cloud-teal/5 to-transparent z-10" />
         <img 
-          src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=1600&q=80" 
-          alt="Dashboard Preview"
+          src="/dashboard-screenshot.png" 
+          alt="SkySpear Solutions Dashboard"
           className="w-full h-auto object-cover min-h-[400px]"
-          style={{ objectFit: 'cover' }}
           onError={(e) => {
-            console.error("Image failed to load");
-            e.currentTarget.style.background = "linear-gradient(to right, #4facfe, #00f2fe)";
+            console.error("Dashboard image failed to load, using fallback");
+            e.currentTarget.src = "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=1600&q=80";
             e.currentTarget.style.minHeight = "400px";
           }}
         />
